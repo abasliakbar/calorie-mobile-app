@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { useTheme } from "expo-router/react-navigation";
-import { View, Text } from 'react-native'; // Basic icons later, or Ionicons
+import { Text } from 'react-native';
 
 // We can just use text or simple shapes for icons to start, or expo-symbols
 export default function TabLayout() {
