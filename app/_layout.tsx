@@ -22,7 +22,7 @@ const darkTheme = {
 };
 
 function useProtectedRoute() {
-  const { session, initialized } = useAuthStore();
+  const { session, initialized, profile } = useAuthStore();
   const segments = useSegments();
   const router = useRouter();
 
@@ -30,15 +30,28 @@ function useProtectedRoute() {
     if (!initialized) return;
 
     const inAuthGroup = segments[0] === '(auth)';
+    const inOnboardingGroup = segments[0] === '(onboarding)';
+
+    // Check if profile is complete (has all required fields)
+    const isProfileComplete = profile &&
+      profile.sex !== null &&
+      profile.age !== null &&
+      profile.height_cm !== null &&
+      profile.weight_kg !== null &&
+      profile.activity_level !== null &&
+      profile.goal !== null;
 
     if (!session && !inAuthGroup) {
       // Not signed in and not on an auth screen — redirect to login
       router.replace('/(auth)/login');
+    } else if (session && !isProfileComplete && !inOnboardingGroup) {
+      // Signed in but profile incomplete and not on onboarding — redirect to onboarding
+      router.replace('/(onboarding)/step1');
     } else if (session && inAuthGroup) {
       // Signed in but still on an auth screen — redirect to tabs
       router.replace('/(tabs)');
     }
-  }, [session, initialized, segments, router]);
+  }, [session, initialized, profile, segments, router]);
 }
 
 export default function RootLayout() {
